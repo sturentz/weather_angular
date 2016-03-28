@@ -1,0 +1,91 @@
+<!doctype html>
+<html ng-app="myApp">
+<head>
+<meta charset="UTF-8">
+<title>Weather</title>
+ <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Oleo+Script:400,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+
+<link href="css/main.css" rel="stylesheet" type="text/css">
+</head>
+
+
+
+<body>
+<div class="widgetholder" ng-controller="weatherCtrl">
+<div id="weatherdrop">
+    <div class="weather-holder">
+       <img class='weather-icon relative' src='{{weather.icon_url}}'>
+       <div class="weather absolute">{{weather.weather}}</div>
+       <div class="temperature_string headtype sanserif absolute">{{weather.temp_f}}&deg;F</div>
+       <div class="wind_string headtype sanserif absolute">
+          <div>Humditiy: {{weather.relative_humidity}}</div>  
+          <div>Precipitation in Last Hour: {{weather.precip_1hr_in}}</div>
+          <div>Precipitation Today: {{weather.precip_today_in}}</div>     
+          <div>Feels Like: {{weather.feelslike_f}}&deg;F</div>  
+       </div>
+      
+      
+       <div class="citylocation headtype sanserif absolute">{{weather.observation_location.city}}</div>
+        
+    </div>
+     <div class="observationtime sanserif absolute">{{weather.observation_time}}</div>
+</div>
+<div class="safe relative">Select Weather at Coders Safe House Location</div>
+<div class="safehouse relative" >
+   <div ng-repeat="where in locations">
+    <div ng-click="updateWeather(where[0], where[1]);" class="city"> {{where[0]}}</div>
+    </div>
+
+</div>
+</div>
+
+<script>
+
+	
+
+
+var app = angular.module('myApp', []);
+
+function weatherCtrl($scope, $http) {
+
+    $scope.weather = [];
+	$scope.locations = [['New York','ny'], ['Chicago','il'], ['San Diego','ca'], ['Seattle','wa'], ['Houston','tx'] ];
+
+
+    $scope.loadAPI = function() {
+        var httpRequest = $http({
+            method: 'POST',
+            url: 'cache_feed_ang.php',
+            data: $.param({'data' : $scope.apiData}),
+			headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	
+
+        }).success(function(data, status) {
+			
+			//console.log(data);
+            $scope.weather = data;
+        });
+
+    };
+	
+	$scope.updateWeather = function(city,state){
+		
+		$scope.apiData = {'city':city,'state':state};
+		 $scope.loadAPI();
+
+	
+   // alert(city +" "+state);
+  };
+  
+     $scope.updateWeather('new york','ny');
+     $scope.loadAPI();
+
+}
+
+</script>
+
+</body>
+</html>
